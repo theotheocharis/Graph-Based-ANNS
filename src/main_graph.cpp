@@ -1,6 +1,9 @@
 #include <iostream>
 #include <unistd.h>
 
+#include "../include/parser.hpp"
+#include "../include/mrng.hpp"
+
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -42,11 +45,36 @@ int main(int argc, char **argv) {
         }
     }
 
+    auto parser = new Parser();
+    vector<Image *> *inputImages = parser->readInputFile(inputFile);
+    vector<Image *> *queryImages = parser->readQueryFile(queryFile);
+
     if (m == 1) {
         // Call GNNS
     } else {
-        // Call MRNG
+        auto mrng = new MRNG(N, l, (int) inputImages->size());
+
+        mrng->constructGraph(inputImages);
+
+        auto graph = mrng->getGraph();
+
+        for (int i = 0; i < (int)graph->size(); i++) {
+            cout << "Image " << i << " has " << graph->at(i)->size() << " neighbors!" << endl;
+        }
+
+        delete mrng;
     }
+
+    delete parser;
+    for (auto image : *inputImages) {
+        delete image;
+    }
+    delete inputImages;
+
+    for (auto image : *queryImages) {
+        delete image;
+    }
+    delete queryImages;
 
     return 0;
 }

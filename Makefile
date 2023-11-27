@@ -14,8 +14,8 @@ SRCS_LSH = $(SRC)main_lsh.cpp $(SRC)parser.cpp $(SRC)utils.cpp $(SRC)image.cpp $
 OBJS_CUBE = $(BUILD)main_cube.o $(BUILD)parser.o $(BUILD)utils.o $(BUILD)image.o $(BUILD)hash_function.o $(BUILD)hash_table.o $(BUILD)cube.o
 SRCS_CUBE = $(SRC)main_cube.cpp $(SRC)parser.cpp $(SRC)utils.cpp $(SRC)image.cpp $(SRC)hash_function.cpp $(SRC)hash_table.cpp $(SRC)cube.cpp
 
-OBJS_GRAPH = $(BUILD)main_graph.o $(BUILD)parser.o $(BUILD)utils.o $(BUILD)image.o $(BUILD)mrng.o $(BUILD)gnns.o
-SRCS_GRAPH = $(SRC)main_graph.cpp $(SRC)parser.cpp $(SRC)utils.cpp $(SRC)image.cpp $(SRC)mrng.cpp $(SRC)gnns.cpp
+OBJS_GRAPH = $(BUILD)main_graph.o $(BUILD)parser.o $(BUILD)utils.o $(BUILD)image.o $(BUILD)mrng.o $(BUILD)gnns.o $(BUILD)lsh.o $(BUILD)hash_function.o $(BUILD)hash_table.o
+SRCS_GRAPH = $(SRC)main_graph.cpp $(SRC)parser.cpp $(SRC)utils.cpp $(SRC)image.cpp $(SRC)mrng.cpp $(SRC)gnns.cpp $(SRC)lsh.cpp $(SRC)hash_function.cpp $(SRC)hash_table.cpp
 
 LSH = $(BUILD)lsh
 

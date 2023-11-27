@@ -27,7 +27,7 @@ private:
 public:
     // Constructor
     LSH(int k, int L, int N, int R, std::vector<Image *> *data, const std::string&);
-    LSH(int k, int L, int R, std::vector<Image *> *data);
+    LSH(int k, int L, std::vector<Image *> *data);
 
     void insert(Image *);
     
@@ -36,7 +36,7 @@ public:
 
     std::vector<double> getTrueNeighbors(Image *);
 
-    std::vector<Image *> *reverseSearch(std::vector<double> *, int);
+    Image *getNeighbor(Image *);
 
     void outputResults(std::vector<std::pair<uint, double>>, std::vector<double>, const std::set<uint>&, Image *, double, double);
 

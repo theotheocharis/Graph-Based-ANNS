@@ -76,3 +76,7 @@ vector<int> *hammingDistance(const string& vertex, int distance) {
 bool sortPairBySecond(const pair<uint, double> &a, const pair<uint, double> &b) {
     return a.second < b.second;
 }
+
+bool sortNeighbors(const pair<void *, double> &a, const pair<void *, double> &b) {
+    return a.second < b.second;
+}

@@ -39,6 +39,29 @@ LSH::LSH(int k, int L,int N, int R, vector<Image *> *data, const string& outputF
     }
 }
 
+LSH::LSH(int k, int L, std::vector<Image *> *data) {
+    this->k = k;
+    this->L = L;
+    this->data = data;
+    this->w = 10;
+
+    r.resize(L, vector<int>(0));
+
+    for (int i = 0; i < L; i++) {
+        auto table = new HashTable(data->size() / 8);
+        auto hashFuncs = new vector<HashFunction *>;
+        for (int j = 0; j < k; j++) {
+            hashFuncs->push_back(new HashFunction(w));
+            r[i].push_back(rand());
+        }
+        hashTables.emplace_back(table, hashFuncs);
+    }
+
+    for (auto image : *data) {
+        insert(image);
+    }
+}
+
 void LSH::insert(Image *image) {
 
     for (int i = 0; i < L; i++) {
@@ -125,6 +148,35 @@ std::vector<double> LSH::getTrueNeighbors(Image *image) {
     sort(neighborsTrue.begin(), neighborsTrue.end());
 
     return neighborsTrue;
+}
+
+// Function for graph construction. Given an image it returns
+// its approximate neighbor.
+Image *LSH::getNeighbor(Image *image) {
+    list<pair<uint, void *>> neighborsID, neighborsBucket;
+    auto neighbors = new vector<pair<Image *, double>>;
+    set<uint> neighborsSet;
+
+    for (int i = 0; i < L; i++) {
+        int ID = 0;
+        for (int j = 0; j < k; j++) {
+            ID += r[i][j] * hashTables[i].second->at(j)->h(image->getCoords());
+        }
+
+        neighborsID.splice(neighborsID.end(), hashTables[i].first->findSameID(ID));
+        neighborsBucket.splice(neighborsBucket.end(), hashTables[i].first->findBucket(ID));
+    }
+
+    for (auto nID : neighborsBucket) {
+        auto neighbor = (Image *) nID.second;
+        if (image->getId() != neighbor->getId()) {
+            double distance = dist(image->getCoords(), neighbor->getCoords());
+            neighbors->emplace_back(neighbor, distance);
+        }
+    }
+
+    sort(neighbors->begin(), neighbors->end(), sortNeighbors);
+    return neighbors->at(0).first;
 }
 
 void LSH::outputResults(vector<pair<uint, double>> neighborsLSH,

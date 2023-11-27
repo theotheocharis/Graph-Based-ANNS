@@ -20,5 +20,6 @@ uint binaryToUint(std::string);
 std::vector<int> *hammingDistance(const std::string&, int);
 
 bool sortPairBySecond(const std::pair<uint, double> &, const std::pair<uint, double> &);
+bool sortNeighbors(const std::pair<void *, double> &, const std::pair<void *, double> &);
 
 #endif
