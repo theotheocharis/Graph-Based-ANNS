@@ -62,10 +62,14 @@ int main(int argc, char **argv) {
         mrng->findStartingNode();
 
         for (auto queryImage : *queryImages) {
+            // Run query
             mrng->searchOnGraph(queryImage);
+
+            // Reset image checked flags
             mrng->setAllUnchecked();
         }
 
+        // Output average time and MAF
         mrng->outputTimeMAF((int)queryImages->size());
 
         delete mrng;

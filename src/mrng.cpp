@@ -20,6 +20,8 @@ MRNG::MRNG(int N, int l, vector<Image *> *data, const string& outputFile) {
         graph->push_back(neighbors);
     }
 
+    this->MAF = 1;
+
     output.open(outputFile, ios::trunc);
     if (!output.is_open()) {
         cerr << "Can't open output file!" << endl;
@@ -31,7 +33,7 @@ MRNG::MRNG(int N, int l, vector<Image *> *data, const string& outputFile) {
 }
 
 // Construction of graph using LSH instead of brute force
-// to find k nearest neighbors. Sacrificing accuracy for speed
+// to find the nearest neighbor. Sacrificing accuracy for speed
 void MRNG::constructGraph() {
     auto lsh = new LSH(4, 5, this->data);
     bool condition;
@@ -108,6 +110,7 @@ void MRNG::findStartingNode() {
     delete centroid;
 }
 
+// Search-on-graph function
 void MRNG::searchOnGraph(Image *query) {
     vector<pair<Image *, double>> candidates;
     vector<Image *> *neighbors;
@@ -161,9 +164,16 @@ void MRNG::searchOnGraph(Image *query) {
     tApproximate = endApproximate - startApproximate;
     this->totalApproximate += tApproximate.count();
 
+    // Set MAF
+    double af = candidates.at(0).second / neighborsTrue.at(0);
+    if (af > this->MAF) {
+        this->MAF = af;
+    }
+
     outputResults(candidates, neighborsTrue, query);
 }
 
+// Function to get the true neighbors
 vector<double> MRNG::getTrueNeighbors(Image *image) {
     vector<double> neighborsTrue;
 
@@ -176,12 +186,14 @@ vector<double> MRNG::getTrueNeighbors(Image *image) {
     return neighborsTrue;
 }
 
+// Function to reset the checked flag of all images
 void MRNG::setAllUnchecked() {
     for (auto image : *data) {
         image->setChecked(false);
     }
 }
 
+// Function to output query results in txt file
 void MRNG::outputResults(std::vector<std::pair<Image *, double>> candidates,
                          std::vector<double> neighborsTrue,
                          Image *query
@@ -209,6 +221,7 @@ void MRNG::outputTimeMAF(int querySize) {
     if (output.is_open()) {
         contents.append("tAverageApproximate: " + to_string(this->totalApproximate / querySize) + "\n");
         contents.append("tAverageTrue: " + to_string(this->totalTrue / querySize) + "\n");
+        contents.append("MAF: " + to_string(this->MAF) + "\n");
 
         output << contents;
     }

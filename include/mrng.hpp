@@ -22,6 +22,8 @@ private:
     double totalApproximate;
     double totalTrue;
 
+    double MAF;
+
     std::ofstream output;
 
 public:
