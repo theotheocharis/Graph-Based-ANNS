@@ -63,6 +63,7 @@ int main(int argc, char **argv) {
 
         for (auto queryImage : *queryImages) {
             mrng->searchOnGraph(queryImage);
+            mrng->setAllUnchecked();
         }
 
         mrng->outputTimeMAF((int)queryImages->size());

@@ -36,6 +36,8 @@ public:
     void searchOnGraph(Image *);
     std::vector<double> getTrueNeighbors(Image *);
 
+    void setAllUnchecked();
+
     void outputResults(std::vector<std::pair<Image *, double>>, std::vector<double>, Image *);
     void outputTimeMAF(int);
 

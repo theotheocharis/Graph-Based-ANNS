@@ -9,6 +9,8 @@ MRNG::MRNG(int N, int l, vector<Image *> *data, const string& outputFile) {
     this->totalApproximate = 0;
     this->totalTrue = 0;
 
+    this->startingNode = nullptr;
+
     this->data = data;
 
     this->graph = new vector<vector<Image *> *>;
@@ -17,8 +19,6 @@ MRNG::MRNG(int N, int l, vector<Image *> *data, const string& outputFile) {
         auto neighbors = new vector<Image *>;
         graph->push_back(neighbors);
     }
-
-    cout << "Hello!" << endl;
 
     output.open(outputFile, ios::trunc);
     if (!output.is_open()) {
@@ -92,8 +92,8 @@ vector<double> *MRNG::findCentroid() {
 // Find the closest image to centroid to be used as starting node in search
 void MRNG::findStartingNode() {
     vector<double> *centroid = findCentroid();
-    Image *currImage;
-    double minDist = 1000000;
+    Image *currImage = this->data->at(0);
+    double minDist = dist(centroid, currImage->getCoords());
 
     for (auto image : *this->data) {
         double distance = dist(centroid, image->getCoords());
@@ -112,7 +112,7 @@ void MRNG::searchOnGraph(Image *query) {
     vector<pair<Image *, double>> candidates;
     vector<Image *> *neighbors;
     set<uint> neighborsSet;
-    Image *currImage;
+    Image *currImage = nullptr;
     double distance;
 
     chrono::duration<double> tApproximate{}, tTrue{};
@@ -174,6 +174,12 @@ vector<double> MRNG::getTrueNeighbors(Image *image) {
     sort(neighborsTrue.begin(), neighborsTrue.end());
 
     return neighborsTrue;
+}
+
+void MRNG::setAllUnchecked() {
+    for (auto image : *data) {
+        image->setChecked(false);
+    }
 }
 
 void MRNG::outputResults(std::vector<std::pair<Image *, double>> candidates,

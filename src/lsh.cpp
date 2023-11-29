@@ -176,7 +176,11 @@ Image *LSH::getNeighbor(Image *image) {
     }
 
     sort(neighbors->begin(), neighbors->end(), sortNeighbors);
-    return neighbors->at(0).first;
+
+    auto neighbor = neighbors->at(0).first;
+    delete neighbors;
+
+    return neighbor;
 }
 
 void LSH::outputResults(vector<pair<uint, double>> neighborsLSH,
