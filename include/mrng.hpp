@@ -12,17 +12,23 @@ private:
     int N;
     int l;
 
-    int imageNumber;
+    std::vector<Image *> *data;
     // Graph representation as adjacency list
     std::vector<std::vector<Image *> *> *graph;
 
+    Image *startingNode;
+
 public:
 
-    MRNG(int, int, int);
+    MRNG(int, int, std::vector<Image *> *);
 
-    void constructGraph(std::vector<Image *> *);
+    void constructGraph();
+
+    std::vector<double> *findCentroid();
+    void findStartingNode();
 
     std::vector<std::vector<Image *>*>* getGraph();
+    Image *getStartingNode();
 
     ~MRNG();
 

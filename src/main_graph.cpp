@@ -52,15 +52,13 @@ int main(int argc, char **argv) {
     if (m == 1) {
         // Call GNNS
     } else {
-        auto mrng = new MRNG(N, l, (int) inputImages->size());
+        auto mrng = new MRNG(N, l, inputImages);
 
-        mrng->constructGraph(inputImages);
+        mrng->constructGraph();
 
-        auto graph = mrng->getGraph();
+        mrng->findStartingNode();
 
-        for (int i = 0; i < (int)graph->size(); i++) {
-            cout << "Image " << i << " has " << graph->at(i)->size() << " neighbors!" << endl;
-        }
+        cout << "Graph's starting node is image " << mrng->getStartingNode()->getId() << endl;
 
         delete mrng;
     }
