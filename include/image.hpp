@@ -13,13 +13,12 @@ private:
 
     uint id;
     std::vector<double> *coords;
-    uint cluster;
 
-    bool assigned;
+    bool checked;
 
 public:
 
-    Image(uint, std::vector<double> *, uint);
+    Image(uint, std::vector<double> *);
     ~Image();
 
     uint getId();
@@ -28,11 +27,8 @@ public:
     std::vector<double> *getCoords();
     void setCoords(std::vector<double> *);
 
-    uint getCluster();
-    void setCluster(uint);
-
-    bool getAssigned();
-    void setAssigned(bool);
+    bool getChecked();
+    void setChecked(bool);
 
 };
 

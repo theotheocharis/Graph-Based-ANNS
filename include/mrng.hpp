@@ -27,6 +27,9 @@ public:
     std::vector<double> *findCentroid();
     void findStartingNode();
 
+    void searchOnGraph(Image *);
+    std::vector<double> getTrueNeighbors(Image *);
+
     std::vector<std::vector<Image *>*>* getGraph();
     Image *getStartingNode();
 

@@ -4,11 +4,10 @@
 
 using namespace std;
 
-Image::Image(uint newId, vector<double> *coords, uint cluster) {
+Image::Image(uint newId, vector<double> *coords) {
     this->id = newId;
     this->coords = coords;
-    this->cluster = cluster;
-    this->assigned = false;
+    this->checked = false;
 }
 
 Image::~Image() {
@@ -31,18 +30,10 @@ void Image::setCoords(vector<double> *newCoords) {
     coords = newCoords;
 }
 
-uint Image::getCluster() {
-    return this->cluster;
+bool Image::getChecked() {
+    return this->checked;
 }
 
-void Image::setCluster(uint newCluster) {
-    cluster = newCluster;
-}
-
-bool Image::getAssigned() {
-    return this->assigned;
-}
-
-void Image::setAssigned(bool newAssigned) {
-    this->assigned = newAssigned;
+void Image::setChecked(bool newChecked) {
+    this->checked = newChecked;
 }

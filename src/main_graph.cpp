@@ -52,13 +52,18 @@ int main(int argc, char **argv) {
     if (m == 1) {
         // Call GNNS
     } else {
+        // Initialize mrng object
         auto mrng = new MRNG(N, l, inputImages);
 
+        // Graph construction
         mrng->constructGraph();
 
+        // Find image closest to centroid to use as starting node
         mrng->findStartingNode();
 
-        cout << "Graph's starting node is image " << mrng->getStartingNode()->getId() << endl;
+        for (auto queryImage : *queryImages) {
+            mrng->searchOnGraph(queryImage);
+        }
 
         delete mrng;
     }

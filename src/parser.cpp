@@ -39,7 +39,7 @@ vector<Image *> *Parser::readInputFile(const string &fileName) {
     const uint32_t imageSize = rowNumber * columnNumber;
     vector<unsigned char> inputVector(imageSize);
 
-    for (uint i = 0; i < 1000; i++) {
+    for (uint i = 0; i < 3000; i++) {
 
         ifs.read(reinterpret_cast<char *>(inputVector.data()), imageSize);
 
@@ -49,7 +49,7 @@ vector<Image *> *Parser::readInputFile(const string &fileName) {
             coords->push_back(d);
         }
 
-        imageVector->push_back(new Image(i+1, coords, 0));
+        imageVector->push_back(new Image(i+1, coords));
     }
 
     cout << "Finished reading images!" << endl;
@@ -92,7 +92,7 @@ vector<Image *> *Parser::readQueryFile(const string &fileName) {
             auto d = static_cast<double>(uc);
             coords->push_back(d);
         }
-        queryImages->push_back(new Image(i+1, coords, 0));
+        queryImages->push_back(new Image(i+1, coords));
     }
 
     ifs.close();

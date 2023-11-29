@@ -94,6 +94,67 @@ void MRNG::findStartingNode() {
     delete centroid;
 }
 
+void MRNG::searchOnGraph(Image *query) {
+    vector<pair<Image *, double>> candidates;
+    vector<Image *> *neighbors;
+    set<uint> neighborsSet;
+    Image *currImage;
+    double distance;
+
+    //True search
+    vector<double> neighborsTrue = getTrueNeighbors(query);
+
+    // Approximate search
+    distance = dist(this->startingNode->getCoords(), query->getCoords());
+    candidates.emplace_back(this->startingNode, distance);
+    neighborsSet.insert(this->startingNode->getId());
+
+    int i = 1;
+    while (i < this->l) {
+        // Get first unchecked candidate in set
+        for (auto pair : candidates) {
+            if (!pair.first->getChecked()) {
+                currImage = pair.first;
+                currImage->setChecked(true);
+                break;
+            }
+        }
+
+        neighbors = this->graph->at(currImage->getId() - 1);
+
+        for (auto neighbor : *neighbors) {
+            // If neighbor not already in candidates
+            if (neighborsSet.find(neighbor->getId()) == neighborsSet.end()) {
+                distance = dist(neighbor->getCoords(), query->getCoords());
+                neighborsSet.insert(neighbor->getId());
+                candidates.emplace_back(neighbor, distance);
+                i++;
+            }
+        }
+
+        sort(candidates.begin(), candidates.end(), sortNeighbors);
+    }
+
+    cout << "Query " << query->getId() << endl;
+    for (int j = 0; j < this->N; j++) {
+        cout << "Nearest neighbor-" << j+1 << ": " << candidates.at(j).first->getId() << endl;
+        cout << "distanceApproximate: " << candidates.at(j).second << endl;
+        cout << "distanceTrue: " << neighborsTrue.at(j) << endl;
+    }
+}
+
+vector<double> MRNG::getTrueNeighbors(Image *image) {
+    vector<double> neighborsTrue;
+
+    for (auto it : *this->data) {
+        neighborsTrue.push_back(dist(it->getCoords(), image->getCoords()));
+    }
+
+    sort(neighborsTrue.begin(), neighborsTrue.end());
+
+    return neighborsTrue;
+}
+
 vector<vector<Image *>*>* MRNG::getGraph() {
     return this->graph;
 }
