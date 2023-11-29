@@ -1,7 +1,3 @@
-# Compiler and compiler flags
-CC = g++
-CFLAGS = -std=c++17 -Wall -Wextra -O3
-
 # Directories
 SRC = src/
 INCLUDE = include/
@@ -25,50 +21,50 @@ GRAPH = $(BUILD)graph_search
 
 # Objects
 $(BUILD)main_lsh.o: $(SRC)main_lsh.cpp
-	$(CC) -o $(BUILD)main_lsh.o $(CFLAGS) -c $(SRC)main_lsh.cpp
+	$(CXX) -o $(BUILD)main_lsh.o $(CFLAGS) -c $(SRC)main_lsh.cpp
 
 $(BUILD)main_cube.o: $(SRC)main_cube.cpp
-	$(CC) -o $(BUILD)main_cube.o $(CFLAGS) -c $(SRC)main_cube.cpp
+	$(CXX) -o $(BUILD)main_cube.o $(CFLAGS) -c $(SRC)main_cube.cpp
 
 $(BUILD)main_graph.o: $(SRC)main_graph.cpp
-	$(CC) -o $(BUILD)main_graph.o $(CFLAGS) -c $(SRC)main_graph.cpp
+	$(CXX) -o $(BUILD)main_graph.o $(CFLAGS) -c $(SRC)main_graph.cpp
 
 $(BUILD)parser.o: $(SRC)parser.cpp $(INCLUDE)parser.hpp
-	$(CC) -o $(BUILD)parser.o $(CFLAGS) -c $(SRC)parser.cpp
+	$(CXX) -o $(BUILD)parser.o $(CFLAGS) -c $(SRC)parser.cpp
 
 $(BUILD)utils.o: $(SRC)utils.cpp $(INCLUDE)utils.hpp
-	$(CC) -o $(BUILD)utils.o $(CFLAGS) -c $(SRC)utils.cpp
+	$(CXX) -o $(BUILD)utils.o $(CFLAGS) -c $(SRC)utils.cpp
 
 $(BUILD)image.o: $(SRC)image.cpp $(INCLUDE)image.hpp
-	$(CC) -o $(BUILD)image.o $(CFLAGS) -c $(SRC)image.cpp
+	$(CXX) -o $(BUILD)image.o $(CFLAGS) -c $(SRC)image.cpp
 
 $(BUILD)hash_function.o: $(SRC)hash_function.cpp $(INCLUDE)hash_function.hpp
-	$(CC) -o $(BUILD)hash_function.o $(CFLAGS) -c $(SRC)hash_function.cpp
+	$(CXX) -o $(BUILD)hash_function.o $(CFLAGS) -c $(SRC)hash_function.cpp
 
 $(BUILD)hash_table.o: $(SRC)hash_table.cpp $(INCLUDE)hash_table.hpp
-	$(CC) -o $(BUILD)hash_table.o $(CFLAGS) -c $(SRC)hash_table.cpp
+	$(CXX) -o $(BUILD)hash_table.o $(CFLAGS) -c $(SRC)hash_table.cpp
 
 $(BUILD)cube.o: $(SRC)cube.cpp $(INCLUDE)cube.hpp
-	$(CC) -o $(BUILD)cube.o $(CFLAGS) -c $(SRC)cube.cpp
+	$(CXX) -o $(BUILD)cube.o $(CFLAGS) -c $(SRC)cube.cpp
 
 $(BUILD)lsh.o: $(SRC)lsh.cpp $(INCLUDE)lsh.hpp
-	$(CC) -o $(BUILD)lsh.o $(CFLAGS) -c $(SRC)lsh.cpp
+	$(CXX) -o $(BUILD)lsh.o $(CFLAGS) -c $(SRC)lsh.cpp
 
 $(BUILD)mrng.o: $(SRC)mrng.cpp $(INCLUDE)mrng.hpp
-	$(CC) -o $(BUILD)mrng.o $(CFLAGS) -c $(SRC)mrng.cpp
+	$(CXX) -o $(BUILD)mrng.o $(CFLAGS) -c $(SRC)mrng.cpp
 
 $(BUILD)gnns.o: $(SRC)gnns.cpp $(INCLUDE)gnns.hpp
-	$(CC) -o $(BUILD)gnns.o $(CFLAGS) -c $(SRC)gnns.cpp
+	$(CXX) -o $(BUILD)gnns.o $(CFLAGS) -c $(SRC)gnns.cpp
 
 # Executables
 $(LSH): $(OBJS_LSH)
-	$(CC) $(CFLAGS) -o $(LSH) $(OBJS_LSH)
+	$(CXX) $(CFLAGS) -o $(LSH) $(OBJS_LSH)
 
 $(CUBE): $(OBJS_CUBE)
-	$(CC) $(CFLAGS) -o $(CUBE) $(OBJS_CUBE)
+	$(CXX) $(CFLAGS) -o $(CUBE) $(OBJS_CUBE)
 
 $(GRAPH): $(OBJS_GRAPH)
-	$(CC) $(CFLAGS) -o $(GRAPH) $(OBJS_GRAPH)
+	$(CXX) $(CFLAGS) -o $(GRAPH) $(OBJS_GRAPH)
 
 all: $(CUBE) $(LSH) $(GRAPH)
 

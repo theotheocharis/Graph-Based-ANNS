@@ -1,15 +1,17 @@
 #include <iostream>
 #include <unistd.h>
+#include <vector>
 
 #include "../include/parser.hpp"
 #include "../include/mrng.hpp"
+#include "../include/gnns.hpp"
 
 using namespace std;
 
 int main(int argc, char **argv) {
     int opt;
     string inputFile, queryFile, outputFile;
-    int k = 50, E = 30, R = 1, N = 1, l = 20, m;
+    int k = 5, E = 3, R = 1, N = 1, l = 20, m;
 
     while((opt = getopt(argc, argv, "d:q:k:E:R:N:l:m:o:")) != -1) {
         switch (opt) {
@@ -51,6 +53,34 @@ int main(int argc, char **argv) {
 
     if (m == 1) {
         // Call GNNS
+        // Set the parameters for GNNS
+        //int k = 5; // Number of nearest neighbors in k-NN Graph = Κ
+        //int E = 3; // Number of expansions = Ε
+        //int R = 5; // Number of random restarts = R
+        //int N = N; // number of k nearest
+        int T = 10; // Number of greedy steps 
+        
+
+
+        auto gnns = new GNNS(E, R, N, (int) inputImages->size());
+
+        std::cout << "Graph Initiliazed" << std::endl; //for debug purposes
+
+        gnns->constructGraph(inputImages, k); // Construct the graph with E expansions
+
+        std::cout << "Graph Contstructed" << std::endl; //for debug purposes
+
+        for (const auto& query : *queryImages) {
+        // Run the GNNS algorithm
+        auto result = gnns->search(query);
+
+        for (const auto& image : result) {
+            std::cout << "Image ID: " << image->getId() << std::endl; //for testing purposes
+            }
+        }
+
+
+        delete gnns;
     } else {
         // Initialize mrng object
         auto mrng = new MRNG(N, l, inputImages, outputFile);

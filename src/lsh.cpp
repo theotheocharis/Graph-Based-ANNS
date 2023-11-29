@@ -183,6 +183,45 @@ Image *LSH::getNeighbor(Image *image) {
     return neighbor;
 }
 
+std::vector<Image*> LSH::getNeighborsGNNS(Image *queryImage, int k) {
+    list<pair<uint, void *>> neighborsID, neighborsBucket;
+    vector<pair<Image*, double>> neighborCandidates;
+
+    // LSH processing to find potential neighbors
+    for (int i = 0; i < L; ++i) {
+        int ID = 0;
+        for (int j = 0; j < this->k; ++j)    {
+            ID += r[i][j] * hashTables[i].second->at(j)->h(queryImage->getCoords());
+        }
+
+        neighborsID.splice(neighborsID.end(), hashTables[i].first->findSameID(ID));
+        neighborsBucket.splice(neighborsBucket.end(), hashTables[i].first->findBucket(ID));
+    }
+
+    // Calculating distances and storing candidates
+    for (auto nID : neighborsBucket) {
+        Image* neighbor = static_cast<Image*>(nID.second);
+        if (neighbor != queryImage) {
+            double distance = dist(queryImage->getCoords(), neighbor->getCoords());
+            neighborCandidates.emplace_back(neighbor, distance);
+        }
+    }
+
+    // Sort candidates by distance
+    std::sort(neighborCandidates.begin(), neighborCandidates.end(),
+              [](const std::pair<Image*, double>& a, const std::pair<Image*, double>& b) {
+                  return a.second < b.second;
+              });
+
+    // Select the top k neighbors
+    std::vector<Image*> kNearestNeighbors;
+    for (int i = 0; i < k && i < neighborCandidates.size(); ++i) {
+        kNearestNeighbors.push_back(neighborCandidates[i].first);
+    }
+
+    return kNearestNeighbors;
+}
+
 void LSH::outputResults(vector<pair<uint, double>> neighborsLSH,
                         vector<double> neighborsTrue, const set<uint>& neighborsRNear,
                         Image *q, double tLSH, double tTrue) {
