@@ -2,9 +2,12 @@
 
 using namespace std;
 
-MRNG::MRNG(int N, int l, vector<Image *> *data) {
+MRNG::MRNG(int N, int l, vector<Image *> *data, const string& outputFile) {
     this->N = N;
     this->l = l;
+
+    this->totalApproximate = 0;
+    this->totalTrue = 0;
 
     this->data = data;
 
@@ -14,6 +17,17 @@ MRNG::MRNG(int N, int l, vector<Image *> *data) {
         auto neighbors = new vector<Image *>;
         graph->push_back(neighbors);
     }
+
+    cout << "Hello!" << endl;
+
+    output.open(outputFile, ios::trunc);
+    if (!output.is_open()) {
+        cerr << "Can't open output file!" << endl;
+        abort();
+    }
+    string contents;
+    contents.append("MRNG Results\n");
+    output << contents;
 }
 
 // Construction of graph using LSH instead of brute force
@@ -101,10 +115,18 @@ void MRNG::searchOnGraph(Image *query) {
     Image *currImage;
     double distance;
 
+    chrono::duration<double> tApproximate{}, tTrue{};
+
     //True search
+    auto startTrue = chrono::high_resolution_clock::now();
     vector<double> neighborsTrue = getTrueNeighbors(query);
+    auto endTrue = chrono::high_resolution_clock::now();
+
+    tTrue = endTrue - startTrue;
+    this->totalTrue += tTrue.count();
 
     // Approximate search
+    auto startApproximate = chrono::high_resolution_clock::now();
     distance = dist(this->startingNode->getCoords(), query->getCoords());
     candidates.emplace_back(this->startingNode, distance);
     neighborsSet.insert(this->startingNode->getId());
@@ -134,13 +156,12 @@ void MRNG::searchOnGraph(Image *query) {
 
         sort(candidates.begin(), candidates.end(), sortNeighbors);
     }
+    auto endApproximate = chrono::high_resolution_clock::now();
 
-    cout << "Query " << query->getId() << endl;
-    for (int j = 0; j < this->N; j++) {
-        cout << "Nearest neighbor-" << j+1 << ": " << candidates.at(j).first->getId() << endl;
-        cout << "distanceApproximate: " << candidates.at(j).second << endl;
-        cout << "distanceTrue: " << neighborsTrue.at(j) << endl;
-    }
+    tApproximate = endApproximate - startApproximate;
+    this->totalApproximate += tApproximate.count();
+
+    outputResults(candidates, neighborsTrue, query);
 }
 
 vector<double> MRNG::getTrueNeighbors(Image *image) {
@@ -155,12 +176,36 @@ vector<double> MRNG::getTrueNeighbors(Image *image) {
     return neighborsTrue;
 }
 
-vector<vector<Image *>*>* MRNG::getGraph() {
-    return this->graph;
+void MRNG::outputResults(std::vector<std::pair<Image *, double>> candidates,
+                         std::vector<double> neighborsTrue,
+                         Image *query
+                         ) {
+    string contents;
+
+    if (output.is_open()) {
+        contents.append("Query: " + to_string(query->getId()) + "\n");
+
+        for (int i = 0; i < this->N; i++) {
+            contents.append("Nearest neighbor-" + to_string(i+1) + ": " + to_string(candidates.at(i).first->getId()) + "\n");
+            contents.append("distanceApproximate: " + to_string(candidates.at(i).second) + "\n");
+            contents.append("distanceTrue: " + to_string(neighborsTrue.at(i)) + "\n");
+        }
+
+        contents.append("\n");
+
+        output << contents;
+    }
 }
 
-Image *MRNG::getStartingNode() {
-    return this->startingNode;
+void MRNG::outputTimeMAF(int querySize) {
+    string contents;
+
+    if (output.is_open()) {
+        contents.append("tAverageApproximate: " + to_string(this->totalApproximate / querySize) + "\n");
+        contents.append("tAverageTrue: " + to_string(this->totalTrue / querySize) + "\n");
+
+        output << contents;
+    }
 }
 
 MRNG::~MRNG() {
@@ -169,4 +214,8 @@ MRNG::~MRNG() {
     }
 
     delete graph;
+
+    if (output.is_open()) {
+        output.close();
+    }
 }

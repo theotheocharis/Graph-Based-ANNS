@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
         // Call GNNS
     } else {
         // Initialize mrng object
-        auto mrng = new MRNG(N, l, inputImages);
+        auto mrng = new MRNG(N, l, inputImages, outputFile);
 
         // Graph construction
         mrng->constructGraph();
@@ -64,6 +64,8 @@ int main(int argc, char **argv) {
         for (auto queryImage : *queryImages) {
             mrng->searchOnGraph(queryImage);
         }
+
+        mrng->outputTimeMAF((int)queryImages->size());
 
         delete mrng;
     }

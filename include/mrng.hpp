@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "image.hpp"
 #include "lsh.hpp"
@@ -18,9 +19,14 @@ private:
 
     Image *startingNode;
 
+    double totalApproximate;
+    double totalTrue;
+
+    std::ofstream output;
+
 public:
 
-    MRNG(int, int, std::vector<Image *> *);
+    MRNG(int, int, std::vector<Image *> *, const std::string&);
 
     void constructGraph();
 
@@ -30,8 +36,8 @@ public:
     void searchOnGraph(Image *);
     std::vector<double> getTrueNeighbors(Image *);
 
-    std::vector<std::vector<Image *>*>* getGraph();
-    Image *getStartingNode();
+    void outputResults(std::vector<std::pair<Image *, double>>, std::vector<double>, Image *);
+    void outputTimeMAF(int);
 
     ~MRNG();
 
