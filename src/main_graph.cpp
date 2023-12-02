@@ -11,7 +11,7 @@ using namespace std;
 int main(int argc, char **argv) {
     int opt;
     string inputFile, queryFile, outputFile;
-    int k = 5, E = 3, R = 5, N = 5, l = 20, m;
+    int k = 5, E = 3, R = 1, N = 5, l = 20, m;
 
     while((opt = getopt(argc, argv, "d:q:k:E:R:N:l:m:o:")) != -1) {
         switch (opt) {

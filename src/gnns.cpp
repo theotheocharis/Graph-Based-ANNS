@@ -35,64 +35,69 @@ GNNS::GNNS(int E, int R, int N, vector<Image *> *data,const string& outputFile) 
 
 //Construction of graph using LSH to find k nearest neighbors
 void GNNS::constructGraph(vector<Image *> *inputImages, int k) {
-    LSH lsh(k, 3, inputImages); // Initialize LSH
-
-    graph->clear();
-    graph->resize(inputImages->size());
-    for (int i = 0; i < inputImages->size(); ++i) {
-        (*graph)[i] = new std::vector<Image*>(); // Allocate a new vector
-    }
+    LSH lsh(5, 3, inputImages); // Initialize LSH
 
     for (int i = 0; i < inputImages->size(); ++i) {
         Image* image = (*inputImages)[i];
         auto neighbors = lsh.getNeighborsGNNS(image, k); // Get k-nearest neighbors
+        //if ((*graph)[i]) { // Check if the pointer is valid
+        //    (*graph)[i]->insert((*graph)[i]->end(), neighbors.begin(), neighbors.end());
+        //}
 
-        if ((*graph)[i]) { // Check if the pointer is valid
-            (*graph)[i]->insert((*graph)[i]->end(), neighbors.begin(), neighbors.end());
+        for (auto neighbor : neighbors)
+        {
+            graph->at(i)->push_back(neighbor);
         }
+        
     }
 }
 
 
 void GNNS::search(Image* query) {
     std::vector<std::pair<Image*, double>> candidates;
-    int maxGreedySteps = std::sqrt(this->data->size());
+    set<uint> neighborsSet;
+    int maxGreedySteps = 50;
     vector<double> neighborsTrue = getTrueNeighbors(query); // Calculate true distances
+    
 
     for (int r = 0; r < R; ++r) { // Perform R random restarts
-        double distanceApproximate = std::numeric_limits<double>::max();
         int randomIndex = std::rand() % this->data->size();
         Image* currentImage = (*graph)[randomIndex]->at(0);
-        int neighborsAdded = 0; // Initialize neighborsAdded for each random restart
+
+        while (neighborsSet.find(currentImage->getId()) != neighborsSet.end())
+        {
+            int randomIndex = std::rand() % this->data->size();
+            Image* currentImage = (*graph)[randomIndex]->at(0);
+        }
+
+        double currentDistance = dist(query->getCoords(), currentImage->getCoords());
+        neighborsSet.insert(currentImage->getId());
 
         for (int t = 0; t < maxGreedySteps; ++t) {
-            double currentDistance = dist(query->getCoords(), currentImage->getCoords());
-            if (currentDistance < distanceApproximate && neighborsAdded < this->N) {
-                double trueDistance = dist(currentImage->getCoords(), query->getCoords());
-                candidates.emplace_back(currentImage, currentDistance);
-                distanceApproximate = currentDistance;
-                neighborsAdded++;
-            }
-
-            Image* closestNeighbor = nullptr;
-            double closestDistance = std::numeric_limits<double>::max();
-
-            for (Image* neighbor : *(*graph)[currentImage->getId()]) {
-                double distance = dist(query->getCoords(), neighbor->getCoords());
-                if (distance < closestDistance) {
-                    closestNeighbor = neighbor;
-                    closestDistance = distance;
+            double distanceNext = std::numeric_limits<double>::max();
+            Image* nextImage = nullptr;
+            for (int i = 0; i < E ; ++i){
+                auto neighbor = graph->at(currentImage->getId() - 1)->at(i);
+                if (neighborsSet.find(neighbor->getId()) == neighborsSet.end()){
+                    double neighborDistance = dist(query->getCoords(),neighbor->getCoords());
+                    candidates.emplace_back(neighbor, neighborDistance);
+                    neighborsSet.insert(neighbor->getId());
+                    if(neighborDistance < distanceNext){
+                        distanceNext = neighborDistance;
+                        nextImage = neighbor;
+                    }
                 }
             }
 
-            if (closestNeighbor == nullptr || closestDistance >= currentDistance) {
+            if (nextImage == nullptr || distanceNext >= currentDistance) {
                 break;
             }
 
-            currentImage = closestNeighbor;
+            currentImage = nextImage;
         }
     }
 
+    sort(candidates.begin(), candidates.end(), sortNeighbors);
     outputResults(candidates, neighborsTrue, query);
 }
 

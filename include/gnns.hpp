@@ -30,7 +30,6 @@ class GNNS {
         void search(Image* query);
         void constructGraph(std::vector<Image *> *,int);
         std::vector<double> getTrueNeighbors(Image *image);
-
         void outputResults(std::vector<std::pair<Image *, double>>, std::vector<double>, Image *query);
 };
 

@@ -34,26 +34,6 @@ HyperCube::HyperCube(int k, int M, int probes, int N, int R, vector<Image *> *da
     }
 }
 
-HyperCube::HyperCube(int k, int M, int probes, std::vector<Image *> *data) {
-
-    this->k = k;
-    this->M = M;
-    this->probes = probes;
-    this->w = 10;
-    this->data = data;
-
-    this->vertices.reserve(k);
-    this->cube = new HashTable((int)pow(2, k));
-
-    for (int i = 0; i < k; i++) {
-        pair<HashFunction *, unordered_map<uint, char> *> temp = make_pair(new HashFunction(w), new unordered_map<uint, char>());
-        this->vertices.push_back(temp);
-    }
-
-    for (auto image : *data) {
-        insert(image);
-    }
-}
 
 HyperCube::~HyperCube() {
     delete cube;
