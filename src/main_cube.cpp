@@ -65,13 +65,13 @@ int main(int argc, char **argv) {
         vector<Image *> *inputImages = parser->readInputFile(inputFile);
         vector<Image *> *queryImages = parser->readQueryFile(queryFile);
 
-        cout << "Creating hypercube!" << endl;
         HyperCube hyperCube(k, M, probes, N, R, inputImages, outputFile);
-        cout << "Created hypercube!" << endl;
 
         for (auto queryImage : *queryImages) {
             hyperCube.query(queryImage);
         }
+
+        hyperCube.outputMAF();
 
         delete parser;
 

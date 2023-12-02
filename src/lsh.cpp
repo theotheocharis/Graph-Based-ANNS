@@ -15,6 +15,8 @@ LSH::LSH(int k, int L,int N, int R, vector<Image *> *data, const string& outputF
     this->data = data;
     this->w = 10;
 
+    this->MAF = 1;
+
     r.resize(L, vector<int>(0));
 
     for (int i = 0; i < L; i++) {
@@ -135,6 +137,11 @@ void LSH::query(Image* q) {
 
     tLSH = endLSH - startLSH;
 
+    double af = neighborsLSH.at(0).second / neighborsTrue.at(0);
+    if (af > this->MAF) {
+        this->MAF = af;
+    }
+
     outputResults(neighborsLSH, neighborsTrue, setRNear, q, tLSH.count(), tTrue.count());
 }
 
@@ -245,6 +252,16 @@ void LSH::outputResults(vector<pair<uint, double>> neighborsLSH,
         }
 
         contents.append("\n");
+
+        output << contents;
+    }
+}
+
+void LSH::outputMAF() {
+    string contents;
+
+    if (output.is_open()) {
+        contents.append("MAF: " + to_string(this->MAF) + "\n");
 
         output << contents;
     }

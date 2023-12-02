@@ -28,23 +28,24 @@ private:
     std::vector<std::pair<HashFunction *, std::unordered_map<uint, char>*>> vertices;
     std::vector<Image *> *data;
 
+    double MAF;
+
     std::ofstream output;
 
 public:
 
     HyperCube(int, int, int, int, int, std::vector<Image *> *data, std::string);
-    HyperCube(int, int, int, std::vector<Image *> *);
     ~HyperCube();
 
     std::string project(std::vector<double> *);
 
     void insert(void *);
     void query(void *);
-    std::vector<Image *> *reverseSearch(std::vector<double> *, int);
 
     std::priority_queue<double, std::vector<double>, std::greater<>> getTrueNeighbors(void *);
 
     void outputResults(std::vector<std::pair<uint, double>>, std::priority_queue<double, std::vector<double>, std::greater<>>, const std::list<uint>&, void *, double, double);
+    void outputMAF();
 
 };
 

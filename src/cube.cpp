@@ -13,6 +13,8 @@ HyperCube::HyperCube(int k, int M, int probes, int N, int R, vector<Image *> *da
 
     this->w = 10;
 
+    this->MAF = 1;
+
     this->vertices.reserve(k);
     this->cube = new HashTable((int)pow(2,k));
 
@@ -151,6 +153,11 @@ void HyperCube::query(void *pointer) {
 
     tCube = endCube - startCube;
 
+    double af = neighborsCube.at(0).second / neighborsTrue.top();
+    if (af > this->MAF) {
+        this->MAF = af;
+    }
+
     outputResults(neighborsCube, neighborsTrue, neighborsRNear, image, tCube.count(), tTrue.count());
 }
 
@@ -197,4 +204,14 @@ void HyperCube::outputResults(vector<pair<uint, double>> neighborsCube, priority
         output << contents;
     }
 
+}
+
+void HyperCube::outputMAF() {
+    string contents;
+
+    if (output.is_open()) {
+        contents.append("MAF: " + to_string(this->MAF) + "\n");
+
+        output << contents;
+    }
 }

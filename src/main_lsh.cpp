@@ -76,6 +76,8 @@ int main(int argc, char **argv) {
             lsh.query(queryImage);
         }
 
+        lsh.outputMAF();
+
         delete parser;
 
         for (auto image : *inputImages) {

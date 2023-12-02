@@ -22,6 +22,8 @@ private:
     std::vector<std::pair<HashTable *, std::vector<HashFunction *>*>> hashTables;
     std::vector<std::vector<int>> r;
 
+    double MAF;
+
     std::ofstream output;
 
 public:
@@ -41,6 +43,7 @@ public:
     std::vector<Image*> getNeighborsGNNS(Image*, int);
 
     void outputResults(std::vector<std::pair<uint, double>>, std::vector<double>, const std::set<uint>&, Image *, double, double);
+    void outputMAF();
 
     // Destructor
     ~LSH();

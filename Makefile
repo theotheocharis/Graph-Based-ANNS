@@ -1,3 +1,7 @@
+# Compiler and compiler flags
+CXX = g++
+CFLAGS = -std=c++17 -Wall -Wextra -O3
+
 # Directories
 SRC = src/
 INCLUDE = include/
