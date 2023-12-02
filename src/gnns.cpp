@@ -14,6 +14,11 @@ GNNS::GNNS(int E, int R, int N, vector<Image *> *data,const string& outputFile) 
     this->R = R;
     this->N = N;
 
+    this->MAF = 1;
+
+    this->totalApproximate = 0;
+    this->totalTrue = 0;
+
     this->graph = new vector<vector<Image *> *>;
 
     this->data = data;
@@ -57,17 +62,22 @@ void GNNS::search(Image* query) {
     std::vector<std::pair<Image*, double>> candidates;
     set<uint> neighborsSet;
     int maxGreedySteps = 50;
+    chrono::duration<double> tApproximate{}, tTrue{};
+    auto startTrue = chrono::high_resolution_clock::now();
     vector<double> neighborsTrue = getTrueNeighbors(query); // Calculate true distances
-    
+    auto endTrue = chrono::high_resolution_clock::now();
 
+    tTrue = endTrue - startTrue;
+    this->totalTrue += tTrue.count();
+    
+    auto startApproximate = chrono::high_resolution_clock::now();
     for (int r = 0; r < R; ++r) { // Perform R random restarts
         int randomIndex = std::rand() % this->data->size();
         Image* currentImage = (*graph)[randomIndex]->at(0);
-
         while (neighborsSet.find(currentImage->getId()) != neighborsSet.end())
         {
-            int randomIndex = std::rand() % this->data->size();
-            Image* currentImage = (*graph)[randomIndex]->at(0);
+            randomIndex = std::rand() % this->data->size();
+            currentImage = (*graph)[randomIndex]->at(0);
         }
 
         double currentDistance = dist(query->getCoords(), currentImage->getCoords());
@@ -77,6 +87,10 @@ void GNNS::search(Image* query) {
             double distanceNext = std::numeric_limits<double>::max();
             Image* nextImage = nullptr;
             for (int i = 0; i < E ; ++i){
+
+                if (i == graph->at(currentImage->getId() - 1)->size()){
+                    break;
+                }
                 auto neighbor = graph->at(currentImage->getId() - 1)->at(i);
                 if (neighborsSet.find(neighbor->getId()) == neighborsSet.end()){
                     double neighborDistance = dist(query->getCoords(),neighbor->getCoords());
@@ -98,10 +112,32 @@ void GNNS::search(Image* query) {
     }
 
     sort(candidates.begin(), candidates.end(), sortNeighbors);
+
+    auto endApproximate = chrono::high_resolution_clock::now();
+
+    tApproximate = endApproximate - startApproximate;
+    this->totalApproximate += tApproximate.count();
+    
+    // Set MAF
+    double af = candidates.at(0).second / neighborsTrue.at(0);
+    if (af > this->MAF) {
+        this->MAF = af;
+    }
+
     outputResults(candidates, neighborsTrue, query);
 }
 
+void GNNS::outputTimeMAF(int querySize) {
+    string contents;
 
+    if (output.is_open()) {
+        contents.append("tAverageApproximate: " + to_string(this->totalApproximate / querySize) + "\n");
+        contents.append("tAverageTrue: " + to_string(this->totalTrue / querySize) + "\n");
+        contents.append("MAF: " + to_string(this->MAF) + "\n");
+
+        output << contents;
+    }
+}
 
 // Function to get the true neighbors
 vector<double> GNNS::getTrueNeighbors(Image *image) {

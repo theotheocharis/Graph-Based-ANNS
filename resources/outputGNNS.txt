@@ -1,0 +1,111 @@
+GNNS Results
+Query: 1
+Nearest neighbor-1: 1674
+distanceApproximate: 1095.859480
+distanceTrue: 1095.859480
+Nearest neighbor-2: 523
+distanceApproximate: 1205.841615
+distanceTrue: 1175.034468
+Nearest neighbor-3: 1771
+distanceApproximate: 1292.130411
+distanceTrue: 1187.043386
+
+Query: 2
+Nearest neighbor-1: 1331
+distanceApproximate: 1958.501723
+distanceTrue: 1554.419184
+Nearest neighbor-2: 1059
+distanceApproximate: 1969.335675
+distanceTrue: 1741.450545
+Nearest neighbor-3: 1728
+distanceApproximate: 2048.460153
+distanceTrue: 1830.262003
+
+Query: 3
+Nearest neighbor-1: 1698
+distanceApproximate: 547.097797
+distanceTrue: 547.097797
+Nearest neighbor-2: 1659
+distanceApproximate: 617.898050
+distanceTrue: 617.898050
+Nearest neighbor-3: 277
+distanceApproximate: 680.468956
+distanceTrue: 645.058137
+
+Query: 4
+Nearest neighbor-1: 1898
+distanceApproximate: 1593.716411
+distanceTrue: 1297.786577
+Nearest neighbor-2: 96
+distanceApproximate: 1647.852239
+distanceTrue: 1394.305562
+Nearest neighbor-3: 657
+distanceApproximate: 1716.525269
+distanceTrue: 1484.553468
+
+Query: 5
+Nearest neighbor-1: 1935
+distanceApproximate: 1589.772940
+distanceTrue: 1322.507089
+Nearest neighbor-2: 609
+distanceApproximate: 1653.215352
+distanceTrue: 1335.511512
+Nearest neighbor-3: 941
+distanceApproximate: 1656.154884
+distanceTrue: 1523.534050
+
+Query: 6
+Nearest neighbor-1: 1089
+distanceApproximate: 1634.155133
+distanceTrue: 541.841305
+Nearest neighbor-2: 15
+distanceApproximate: 1675.843370
+distanceTrue: 554.277909
+Nearest neighbor-3: 1363
+distanceApproximate: 2000.567919
+distanceTrue: 570.586540
+
+Query: 7
+Nearest neighbor-1: 273
+distanceApproximate: 1603.116652
+distanceTrue: 1489.441506
+Nearest neighbor-2: 1009
+distanceApproximate: 1654.922657
+distanceTrue: 1603.116652
+Nearest neighbor-3: 155
+distanceApproximate: 1773.699524
+distanceTrue: 1654.922657
+
+Query: 8
+Nearest neighbor-1: 933
+distanceApproximate: 1846.712214
+distanceTrue: 1683.979513
+Nearest neighbor-2: 375
+distanceApproximate: 1881.548830
+distanceTrue: 1829.456477
+Nearest neighbor-3: 111
+distanceApproximate: 1896.023470
+distanceTrue: 1844.486921
+
+Query: 9
+Nearest neighbor-1: 1399
+distanceApproximate: 2207.961277
+distanceTrue: 2167.998847
+Nearest neighbor-2: 1614
+distanceApproximate: 2225.464446
+distanceTrue: 2188.660092
+Nearest neighbor-3: 1634
+distanceApproximate: 2231.242479
+distanceTrue: 2207.961277
+
+Query: 10
+Nearest neighbor-1: 16
+distanceApproximate: 1438.813400
+distanceTrue: 1391.532249
+Nearest neighbor-2: 704
+distanceApproximate: 1443.095284
+distanceTrue: 1438.813400
+Nearest neighbor-3: 338
+distanceApproximate: 1544.849507
+distanceTrue: 1443.095284
+
