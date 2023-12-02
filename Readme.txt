@@ -45,6 +45,32 @@ GITHUB REPO: https://github.com/theotheo7/Graph-Based-ANNS
 ελάχιστες αλλαγές/επεκτάσεις για την εξυπηρέτηση του τωρινού παραδοτέου. Το
 ίδιο ισχύει και για τα αρχεία για το image αλλά και κάποια utility functions.
 
-ΜΕΡΟΣ Α - GNNS
+ΜΕΡΟΣ Α - GNNS 
+
+    gnns.cpp/hpp
+
+        Constructor (GNNS::GNNS): Αρχικοποιεί τον αλγόριθμο GNNS με συγκεκριμένες παραμέτρους.
+
+        Graph Construction (GNNS::constructGraph):Κατασκευάζει το γραφο k-NN χρησιμοποιώντας Locality Sensitive Hashing (LSH) 
+                                                    για να βρει k πλησιέστερους γείτονες για κάθε εικόνα του input dataset.
+
+        Search Method (GNNS::search): Εκτελεί τον αλγόριθμο GNNS για το δοσμενο query image. Αρχικοποιείται ένα διάνυσμα candidates 
+        για την αποθήκευση των υποψήφιων nearest neighbors και των αποστάσεών τους από το query. Χρησιμοποιείται ένα σύνολο neighborsSet για να αποφευχθεί
+        η επαναληπτική εξέταση των ίδιων images. Επιπλεον, ορίζονται μεταβλητές για την καταγραφή του χρόνου εκτέλεσης της αναζήτησης για τις approximate και true αποστάσεις.
+        Η μέθοδος getTrueNeighbors καλείται για να υπολογίσει τις true distances από την query image προς όλα τα images του dataset.
+        Πραγματοποιούνται R τυχαίες επανεκκινήσεις (random restarts). Σε κάθε επανεκκίνηση, επιλέγεται τυχαία μία εικόνα από το σύνολο δεδομένων.
+        Για κάθε επιλεγμένη εικόνα, εκτελούνται έως maxGreedySteps αναζητώντας nearest neighbors. Σε κάθε βήμα, ελέγχεται αν η εικόνα που εξετάζεται 
+        είναι πιο κοντά στην query image από την προηγούμενη και αν ναι, προστίθεται στο διάνυσμα candidates. 
+        Η διαδικασία αυτή συνεχίζεται μέχρι να μη βρεθεί πλησιέστερη εικόνα ή να φτάσουμε το μέγιστο αριθμό βημάτων.
+
+        Output Time and MAF (GNNS::outputTimeMAF): Εξάγει τους average times για approximate και true distance υπολογισμους
+                                                 καθώς και το MAF για όλα τα queries. 
+
+        Get True Neighbors (GNNS::getTrueNeighbors):Υπολογίζει τις true distances μεταξύ ενός query image και όλων των images του dataset.        
+    
+        Output Results (GNNS::outputResults): Εξάγει τα search results για ενα δοσμενο query image συμπεριλαμβάνοντας τo ID του query
+                                              και τις αποστασεις των nearest neighbors(approximate και true)
+
+        Destructor (~GNNS): Καθαρίζει τη μνήμη που έχει δεσμευθεί.
 
 ΜΕΡΟΣ Β - MRNG
