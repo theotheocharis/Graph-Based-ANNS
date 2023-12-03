@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
             hyperCube.query(queryImage);
         }
 
-        hyperCube.outputMAF();
+        hyperCube.outputTimeMAF((int)queryImages->size());
 
         delete parser;
 

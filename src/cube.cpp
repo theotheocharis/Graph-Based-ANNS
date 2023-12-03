@@ -15,6 +15,9 @@ HyperCube::HyperCube(int k, int M, int probes, int N, int R, vector<Image *> *da
 
     this->MAF = 1;
 
+    this->totalApproximate = 0;
+    this->totalTrue = 0;
+
     this->vertices.reserve(k);
     this->cube = new HashTable((int)pow(2,k));
 
@@ -96,6 +99,8 @@ void HyperCube::query(void *pointer) {
 
     tTrue = endTrue - startTrue;
 
+    this->totalTrue += tTrue.count();
+
     auto startCube = chrono::high_resolution_clock::now();
     string binary = project(image->getCoords());
     neighborsID = cube->findBucket(binaryToUint(binary));
@@ -133,12 +138,17 @@ void HyperCube::query(void *pointer) {
 
     tCube = endCube - startCube;
 
-    double af = neighborsCube.at(0).second / neighborsTrue.top();
+    this->totalApproximate = tCube.count();
+
+    double af = 0;
+    if (!neighborsCube.empty()) {
+        af = neighborsCube.at(0).second / neighborsTrue.top();
+    }
     if (af > this->MAF) {
         this->MAF = af;
     }
 
-    outputResults(neighborsCube, neighborsTrue, neighborsRNear, image, tCube.count(), tTrue.count());
+    outputResults(neighborsCube, neighborsTrue, neighborsRNear, image);
 }
 
 priority_queue<double, vector<double>, greater<>> HyperCube::getTrueNeighbors(void *pointer) {
@@ -152,7 +162,7 @@ priority_queue<double, vector<double>, greater<>> HyperCube::getTrueNeighbors(vo
     return neighborsTrue;
 }
 
-void HyperCube::outputResults(vector<pair<uint, double>> neighborsCube, priority_queue<double, vector<double>, greater<>> neighborsTrue, const list<uint>& neighborsRNear, void *qImage, double tCube, double tTrue) {
+void HyperCube::outputResults(vector<pair<uint, double>> neighborsCube, priority_queue<double, vector<double>, greater<>> neighborsTrue, const list<uint>& neighborsRNear, void *qImage) {
     auto image = (Image *) qImage;
 
     string contents;
@@ -170,8 +180,6 @@ void HyperCube::outputResults(vector<pair<uint, double>> neighborsCube, priority
                 neighborsTrue.pop();
             }
 
-            contents.append("tCube: " + to_string(tCube) + "\n");
-            contents.append("tTrue: " + to_string(tTrue) + "\n");
             contents.append("R-near neighbors:\n");
 
             for (auto r : neighborsRNear) {
@@ -186,10 +194,12 @@ void HyperCube::outputResults(vector<pair<uint, double>> neighborsCube, priority
 
 }
 
-void HyperCube::outputMAF() {
+void HyperCube::outputTimeMAF(int querySize) {
     string contents;
 
     if (output.is_open()) {
+        contents.append("tAverageApproximate: " + to_string(this->totalApproximate / querySize) + "\n");
+        contents.append("tAverageTrue: " + to_string(this->totalTrue / querySize) + "\n");
         contents.append("MAF: " + to_string(this->MAF) + "\n");
 
         output << contents;

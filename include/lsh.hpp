@@ -24,6 +24,9 @@ private:
 
     double MAF;
 
+    double totalApproximate;
+    double totalTrue;
+
     std::ofstream output;
 
 public:
@@ -42,8 +45,8 @@ public:
 
     std::vector<Image*> getNeighborsGNNS(Image*, int);
 
-    void outputResults(std::vector<std::pair<uint, double>>, std::vector<double>, const std::set<uint>&, Image *, double, double);
-    void outputMAF();
+    void outputResults(std::vector<std::pair<uint, double>>, std::vector<double>, const std::set<uint>&, Image *);
+    void outputTimeMAF(int);
 
     // Destructor
     ~LSH();

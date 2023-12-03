@@ -11,7 +11,7 @@ using namespace std;
 int main(int argc, char **argv) {
     int opt;
     string inputFile, queryFile, outputFile;
-    int k = 50, E = 30, R = 1, N = 3, l = 20, m = 1;
+    int k = 50, E = 30, R = 1, N = 1, l = 20, m = 1;
 
     string s;
 

@@ -82,7 +82,7 @@ cube: $(CUBE)
 	./$(CUBE) -d resources/input.dat -q resources/query.dat -o resources/outputCube.txt
 
 graph1: $(GRAPH)
-	./$(GRAPH) -d resources/input.dat -q resources/query.dat -k 50 -E 30 -R 3 -N 5 -m 1 -o resources/outputGNNS.txt
+	./$(GRAPH) -d resources/input.dat -q resources/query.dat -m 1 -o resources/outputGNNS.txt
 
 graph2: $(GRAPH)
-	./$(GRAPH) -d resources/input.dat -q resources/query.dat -k 50 -E 30 -R 1 -N 1 -l 20 -m 2 -o resources/outputMRNG.txt
+	./$(GRAPH) -d resources/input.dat -q resources/query.dat -m 2 -o resources/outputMRNG.txt

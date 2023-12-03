@@ -39,7 +39,7 @@ vector<Image *> *Parser::readInputFile(const string &fileName) {
     const uint32_t imageSize = rowNumber * columnNumber;
     vector<unsigned char> inputVector(imageSize);
 
-    for (uint i = 0; i < 10000; i++) {
+    for (uint i = 0; i < imageNumber; i++) {
 
         ifs.read(reinterpret_cast<char *>(inputVector.data()), imageSize);
 

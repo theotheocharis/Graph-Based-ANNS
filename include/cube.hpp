@@ -30,6 +30,9 @@ private:
 
     double MAF;
 
+    double totalApproximate;
+    double totalTrue;
+
     std::ofstream output;
 
 public:
@@ -44,8 +47,8 @@ public:
 
     std::priority_queue<double, std::vector<double>, std::greater<>> getTrueNeighbors(void *);
 
-    void outputResults(std::vector<std::pair<uint, double>>, std::priority_queue<double, std::vector<double>, std::greater<>>, const std::list<uint>&, void *, double, double);
-    void outputMAF();
+    void outputResults(std::vector<std::pair<uint, double>>, std::priority_queue<double, std::vector<double>, std::greater<>>, const std::list<uint>&, void *);
+    void outputTimeMAF(int);
 
 };
 

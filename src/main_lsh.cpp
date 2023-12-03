@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "../include/parser.hpp"
-#include "../include/image.hpp"
 #include "../include/lsh.hpp"
 
 using namespace std;
@@ -67,11 +66,11 @@ int main(int argc, char **argv) {
         LSH lsh(k, L, N, R, inputImages, outputFile);
 
         // Process each query image
-        for(auto queryImage : *queryImages){ //may i need it const here
+        for(auto queryImage : *queryImages){
             lsh.query(queryImage);
         }
 
-        lsh.outputMAF();
+        lsh.outputTimeMAF((int)queryImages->size());
 
         delete parser;
 
