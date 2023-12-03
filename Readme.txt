@@ -45,32 +45,57 @@ GITHUB REPO: https://github.com/theotheo7/Graph-Based-ANNS
 ελάχιστες αλλαγές/επεκτάσεις για την εξυπηρέτηση του τωρινού παραδοτέου. Το
 ίδιο ισχύει και για τα αρχεία για το image αλλά και κάποια utility functions.
 
+Το πρόγραμμα μας έχει ελεγχθεί και με valgrind για τυχών memory leaks.
+
 ΜΕΡΟΣ Α - GNNS 
 
-    gnns.cpp/hpp
+gnns.cpp/hpp
 
-        Constructor (GNNS::GNNS): Αρχικοποιεί τον αλγόριθμο GNNS με συγκεκριμένες παραμέτρους.
+Constructor (GNNS::GNNS): Αρχικοποιεί τον αλγόριθμο GNNS με συγκεκριμένες παραμέτρους.
 
-        Graph Construction (GNNS::constructGraph):Κατασκευάζει τον γράφο k-NN χρησιμοποιώντας Locality Sensitive Hashing (LSH)
-                                                    για να βρει k πλησιέστερους γείτονες για κάθε εικόνα του input dataset.
+Graph Construction (GNNS::constructGraph):Κατασκευάζει τον γράφο k-NN χρησιμοποιώντας Locality Sensitive Hashing (LSH)
+για να βρει k πλησιέστερους γείτονες για κάθε εικόνα του input dataset.
 
-        Search Method (GNNS::search): Εκτελεί τον αλγόριθμο GNNS για το δοσμένο query image. Αρχικοποιείται ένα διάνυσμα candidates
-        για την αποθήκευση των υποψήφιων nearest neighbors και των αποστάσεών τους από το query. Χρησιμοποιείται ένα σύνολο neighborsSet για να αποφευχθεί
-        η επαναληπτική εξέταση των ίδιων images. Επιπλέον, ορίζονται μεταβλητές για την καταγραφή του χρόνου εκτέλεσης της αναζήτησης για τις approximate και true αποστάσεις.
-        Η μέθοδος getTrueNeighbors καλείται για να υπολογίσει τις true distances από την query image προς όλα τα images του dataset.
-        Πραγματοποιούνται R τυχαίες επανεκκινήσεις (random restarts). Σε κάθε επανεκκίνηση, επιλέγεται τυχαία μία εικόνα από το σύνολο δεδομένων.
-        Για κάθε επιλεγμένη εικόνα, εκτελούνται έως maxGreedySteps αναζητώντας nearest neighbors. Σε κάθε βήμα, ελέγχεται αν η εικόνα που εξετάζεται 
-        είναι πιο κοντά στην query image από την προηγούμενη και αν ναι, προστίθεται στο διάνυσμα candidates. 
-        Η διαδικασία αυτή συνεχίζεται μέχρι να μη βρεθεί πλησιέστερη εικόνα ή να φτάσουμε το μέγιστο αριθμό βημάτων.
+Search Method (GNNS::search): Εκτελεί τον αλγόριθμο GNNS για το δοσμένο query image. Αρχικοποιείται ένα διάνυσμα candidates
+για την αποθήκευση των υποψήφιων nearest neighbors και των αποστάσεών τους από το query. Χρησιμοποιείται ένα σύνολο neighborsSet για να αποφευχθεί
+η επαναληπτική εξέταση των ίδιων images. Επιπλέον, ορίζονται μεταβλητές για την καταγραφή του χρόνου εκτέλεσης της αναζήτησης για τις approximate και true αποστάσεις.
+Η μέθοδος getTrueNeighbors καλείται για να υπολογίσει τις true distances από την query image προς όλα τα images του dataset.
+Πραγματοποιούνται R τυχαίες επανεκκινήσεις (random restarts). Σε κάθε επανεκκίνηση, επιλέγεται τυχαία μία εικόνα από το σύνολο δεδομένων.
+Για κάθε επιλεγμένη εικόνα, εκτελούνται έως maxGreedySteps αναζητώντας nearest neighbors. Σε κάθε βήμα, ελέγχεται αν η εικόνα που εξετάζεται
+είναι πιο κοντά στην query image από την προηγούμενη και αν ναι, προστίθεται στο διάνυσμα candidates.
+Η διαδικασία αυτή συνεχίζεται μέχρι να μη βρεθεί πλησιέστερη εικόνα ή να φτάσουμε το μέγιστο αριθμό βημάτων.
 
-        Output Time and MAF (GNNS::outputTimeMAF): Εξάγει τους average times για approximate και true distance υπολογισμούς
-                                                 καθώς και το MAF για όλα τα queries. 
+Output Time and MAF (GNNS::outputTimeMAF): Εξάγει τους average times για approximate και true distance υπολογισμούς
+καθώς και το MAF για όλα τα queries.
 
-        Get True Neighbors (GNNS::getTrueNeighbors):Υπολογίζει τις true distances μεταξύ ενός query image και όλων των images του dataset.        
+Get True Neighbors (GNNS::getTrueNeighbors):Υπολογίζει τις true distances μεταξύ ενός query image και όλων των images του dataset.
     
-        Output Results (GNNS::outputResults): Εξάγει τα search results για ενα δοσμένο query image συμπεριλαμβάνοντας τo ID του query
-                                              και τις αποστάσεις των nearest neighbors(approximate και true)
+Output Results (GNNS::outputResults): Εξάγει τα search results για ενα δοσμένο query image συμπεριλαμβάνοντας τo ID του query
+και τις αποστάσεις των nearest neighbors(approximate και true)
 
-        Destructor (~GNNS): Καθαρίζει τη μνήμη που έχει δεσμευθεί.
+Destructor (~GNNS): Καθαρίζει τη μνήμη που έχει δεσμευθεί.
 
 ΜΕΡΟΣ Β - MRNG
+
+mrng.cpp/hpp: Η βασική κλάση του MRNG. Περιέχει τον γράφο σε μορφή συνδεδεμένης λίστας
+γειτνίασης (vector από vectors). Για την κατασκευή του γράφου, αρχικά, για κάθε image
+του dataset, χρησιμοποιώντας το LSH κάνουμε initialize τους Lp με τον προσεγγιστικά
+πλησιέστερο γείτονα. Μετά, για κάθε image του dataset το οποίο δεν είναι ήδη στους
+candidates, ελέγχουμε το τρίγωνο που δημιουργείται ανάμεσα τους. Για να γλιτώσουμε λίγο
+χρόνο, υπολογίζουμε μόνο 2 ακμές αρχικά και μόνο αν η PR είναι μεγαλύτερη από τη μια
+υπολογίζουμε και την τρίτη. Αν είναι μεγαλύτερη και από αυτή, είναι η μεγαλύτερη του τριγώνου,
+οπότε βγαίνουμε από το loop και συνεχίζουμε στο επόμενο τρίγωνο. Αν ελέγξουμε όλα τα τρίγωνα
+και δεν είναι σε κανένα η μεγαλύτερη ακμή, τότε μπαίνει και αυτό το image στους candidates.
+
+Έπειτα, υπολογίζουμε το centroid όλου του dataset και με brute force βρίσκουμε τον
+πλησιέστερο του γείτονα. Αυτό το image το αποθηκεύουμε ως το navigating node. Έπειτα, για
+κάθε query image χρησιμοποιούμε τη search on graph για να βρούμε τους Ν πλησιέστερους
+γείτονες. Αρχικά, βρίσκουμε τους Ν πραγματικά πλησιέστερους γείτονες με brute force.
+Μετά, ξεκινάμε από το navigating node και μέχρι να βρούμε L candidates παίρνουμε το
+πρώτο unchecked image από τους candidates (έχουμε προσθέσει ένα boolean flag στην κλάση
+image για να μας βοηθήσει) και προσθέτουμε τους γείτονες του στους candidates. Για να
+αποφευχθούν duplicates στους candidates κρατάμε και ένα set με τα ids των images που
+έχουν ήδη μπει. Σε κάθε iteration αλλά και στο τέλος κάνουμε sort τους candidates με
+βάση την απόστασή τους από το query. Τέλος, αποθηκεύουμε το approximation factor, αν αυτό
+είναι το μέγιστο και κάνουμε output τα αποτελέσματα. Μετά από όλα τα queries, κάνουμε
+output τους average χρόνους αλλά και το MAF.
