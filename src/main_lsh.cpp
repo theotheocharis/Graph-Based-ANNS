@@ -63,11 +63,6 @@ int main(int argc, char **argv) {
         vector<Image *> *inputImages = parser->readInputFile(inputFile);
         vector<Image *> *queryImages = parser->readQueryFile(queryFile);
 
-        /*if(inputFile.empty() || queryFile.empty()) {
-            cerr << "Input and Query files are mandatory!" << endl;
-            return 1;
-        }*/
-
         // Initialize LSH with the parsed parameters and input images
         LSH lsh(k, L, N, R, inputImages, outputFile);
 

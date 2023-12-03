@@ -13,6 +13,8 @@ int main(int argc, char **argv) {
     string inputFile, queryFile, outputFile;
     int k = 50, E = 30, R = 1, N = 3, l = 20, m = 1;
 
+    string s;
+
     while((opt = getopt(argc, argv, "d:q:k:E:R:N:l:m:o:")) != -1) {
         switch (opt) {
             case 'd':
@@ -47,62 +49,94 @@ int main(int argc, char **argv) {
         }
     }
 
-    auto parser = new Parser();
-    vector<Image *> *inputImages = parser->readInputFile(inputFile);
-    vector<Image *> *queryImages = parser->readQueryFile(queryFile);
+    if (inputFile.empty()) {
+        cout << "Please provide input file!" << endl;
+        cin >> inputFile;
+    }
+    if (queryFile.empty()) {
+        cout << "Please provide query file!" << endl;
+        cin >> queryFile;
+    }
+    if (outputFile.empty()) {
+        cout << "Please provide output file!" << endl;
+        cin >> outputFile;
+    }
 
-    if (m == 1) {
-        // Call GNNS
-        auto gnns = new GNNS(E, R, N, inputImages, outputFile);
+    do {
+        auto parser = new Parser();
 
-        //cout << "Size of query images" << queryImages->size() << endl;
+        // Read input and query images from files
+        vector<Image *> *inputImages = parser->readInputFile(inputFile);
+        vector<Image *> *queryImages = parser->readQueryFile(queryFile);
 
-        gnns->constructGraph(inputImages, k); // Construct the graph
+        if (m == 1) {
+            // Initialize GNNS object
+            auto gnns = new GNNS(E, R, N, inputImages, outputFile);
 
-        for (const auto& query : *queryImages) { 
+            // Graph construction
+            gnns->constructGraph(inputImages, k);
 
-            gnns->search(query);
+            for (auto query : *queryImages) {
+                // Run query
+                gnns->search(query);
+            }
 
+            gnns->outputTimeMAF((int)queryImages->size());
+
+            delete gnns;
+
+        } else {
+            // Initialize MRNG object
+            auto mrng = new MRNG(N, l, inputImages, outputFile);
+
+            // Graph construction
+            mrng->constructGraph();
+
+            // Find image closest to centroid to use as starting node
+            mrng->findStartingNode();
+
+            for (auto queryImage : *queryImages) {
+                // Run query
+                mrng->searchOnGraph(queryImage);
+
+                // Reset image checked flags
+                mrng->setAllUnchecked();
+            }
+
+            // Output average time and MAF
+            mrng->outputTimeMAF((int)queryImages->size());
+
+            delete mrng;
         }
 
-        gnns->outputTimeMAF((int)queryImages->size());
-
-        delete gnns;
-
-    } else {
-        // Initialize mrng object
-        auto mrng = new MRNG(N, l, inputImages, outputFile);
-
-        // Graph construction
-        mrng->constructGraph();
-
-        // Find image closest to centroid to use as starting node
-        mrng->findStartingNode();
-
-        for (auto queryImage : *queryImages) {
-            // Run query
-            mrng->searchOnGraph(queryImage);
-
-            // Reset image checked flags
-            mrng->setAllUnchecked();
+        delete parser;
+        for (auto image : *inputImages) {
+            delete image;
         }
+        delete inputImages;
 
-        // Output average time and MAF
-        mrng->outputTimeMAF((int)queryImages->size());
+        for (auto image : *queryImages) {
+            delete image;
+        }
+        delete queryImages;
 
-        delete mrng;
-    }
-
-    delete parser;
-    for (auto image : *inputImages) {
-        delete image;
-    }
-    delete inputImages;
-
-    for (auto image : *queryImages) {
-        delete image;
-    }
-    delete queryImages;
+        cout << "Query finished! Would you like to start a new query? (y/n)" << endl;
+        cin >> s;
+        if (s == "y") {
+            if (inputFile.empty()) {
+                cout << "Please provide input file!" << endl;
+                cin >> inputFile;
+            }
+            if (queryFile.empty()) {
+                cout << "Please provide query file!" << endl;
+                cin >> queryFile;
+            }
+            if (outputFile.empty()) {
+                cout << "Please provide output file!" << endl;
+                cin >> outputFile;
+            }
+        }
+    } while (s != "n");
 
     return 0;
 }
