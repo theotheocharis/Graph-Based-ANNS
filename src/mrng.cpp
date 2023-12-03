@@ -32,37 +32,50 @@ MRNG::MRNG(int N, int l, vector<Image *> *data, const string& outputFile) {
     output << contents;
 }
 
-// Construction of graph using LSH instead of brute force
-// to find the nearest neighbor. Sacrificing accuracy for speed
+// MRNG graph construction function
 void MRNG::constructGraph() {
+    // Initialize LSH
     auto lsh = new LSH(4, 5, this->data);
     bool condition;
 
+    // For every image in the dataset
     for (int i = 0; i < (int)this->data->size(); i++) {
         auto image = this->data->at(i);
         auto candidates = new set<Image *>;
+        // Initialize Lp using LSH to find approximate nearest
+        // neighbor
         candidates->insert(lsh->getNeighbor(image));
 
+        // For every other image in the dataset...
         for (auto r : *this->data) {
             condition = true;
+            // ...that is not already in Lp
             if (candidates->find(r) == candidates->end()) {
+                // Check every triangle
                 for (auto t : *candidates) {
+                    // Calculate PR and RT and only if PR > RT we calculate PT
+                    // We save some time and calculations this way
                     double distPR = dist(image->getCoords(), r->getCoords());
                     double distRT = dist(r->getCoords(), t->getCoords());
-                    double distPT = dist(image->getCoords(), t->getCoords());
 
-                    if (distPR > distPT && distPR > distRT) {
-                        condition = false;
-                        break;
+                    if (distPR > distRT) {
+                        double distPT = dist(image->getCoords(), t->getCoords());
+                        if (distPR > distPT) {
+                            // If PR longest edge break
+                            condition = false;
+                            break;
+                        }
                     }
                 }
 
+                // Insert r in the candidates
                 if (condition) {
                     candidates->insert(r);
                 }
             }
         }
 
+        // Add all candidates in graph
         for (auto neighbor : *candidates) {
             this->graph->at(i)->push_back(neighbor);
         }
@@ -92,6 +105,7 @@ vector<double> *MRNG::findCentroid() {
 }
 
 // Find the closest image to centroid to be used as starting node in search
+// We use brute force
 void MRNG::findStartingNode() {
     vector<double> *centroid = findCentroid();
     Image *currImage = this->data->at(0);
@@ -120,7 +134,7 @@ void MRNG::searchOnGraph(Image *query) {
 
     chrono::duration<double> tApproximate{}, tTrue{};
 
-    //True search
+    // Find true neighbors
     auto startTrue = chrono::high_resolution_clock::now();
     vector<double> neighborsTrue = getTrueNeighbors(query);
     auto endTrue = chrono::high_resolution_clock::now();
@@ -145,6 +159,7 @@ void MRNG::searchOnGraph(Image *query) {
             }
         }
 
+        // Get neighbors from graph
         neighbors = this->graph->at(currImage->getId() - 1);
 
         for (auto neighbor : *neighbors) {
@@ -157,6 +172,7 @@ void MRNG::searchOnGraph(Image *query) {
             }
         }
 
+        // Sort candidates based on distance from q
         sort(candidates.begin(), candidates.end(), sortNeighbors);
     }
     auto endApproximate = chrono::high_resolution_clock::now();
@@ -170,6 +186,7 @@ void MRNG::searchOnGraph(Image *query) {
         this->MAF = af;
     }
 
+    // Output results
     outputResults(candidates, neighborsTrue, query);
 }
 
@@ -215,6 +232,7 @@ void MRNG::outputResults(std::vector<std::pair<Image *, double>> candidates,
     }
 }
 
+// Function to output maximum approximation factor and average time
 void MRNG::outputTimeMAF(int querySize) {
     string contents;
 

@@ -2,8 +2,6 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
-#include <random>
-#include <unistd.h>
 
 #include "../include/gnns.hpp"
 
@@ -38,16 +36,13 @@ GNNS::GNNS(int E, int R, int N, vector<Image *> *data,const string& outputFile) 
     output << contents;
 }
 
-//Construction of graph using LSH to find k nearest neighbors
+// Construction of graph using LSH to find k nearest neighbors
 void GNNS::constructGraph(vector<Image *> *inputImages, int k) {
     LSH lsh(5, 3, inputImages); // Initialize LSH
 
-    for (int i = 0; i < inputImages->size(); ++i) {
+    for (int i = 0; i < (int)inputImages->size(); ++i) {
         Image* image = (*inputImages)[i];
         auto neighbors = lsh.getNeighborsGNNS(image, k); // Get k-nearest neighbors
-        //if ((*graph)[i]) { // Check if the pointer is valid
-        //    (*graph)[i]->insert((*graph)[i]->end(), neighbors.begin(), neighbors.end());
-        //}
 
         for (auto neighbor : neighbors)
         {
@@ -57,23 +52,30 @@ void GNNS::constructGraph(vector<Image *> *inputImages, int k) {
     }
 }
 
-
+// GNNS search function
 void GNNS::search(Image* query) {
     std::vector<std::pair<Image*, double>> candidates;
     set<uint> neighborsSet;
     int maxGreedySteps = 50;
     chrono::duration<double> tApproximate{}, tTrue{};
+
+    // Find true neighbors
     auto startTrue = chrono::high_resolution_clock::now();
     vector<double> neighborsTrue = getTrueNeighbors(query); // Calculate true distances
     auto endTrue = chrono::high_resolution_clock::now();
 
     tTrue = endTrue - startTrue;
     this->totalTrue += tTrue.count();
-    
+
+    // Approximate search
     auto startApproximate = chrono::high_resolution_clock::now();
-    for (int r = 0; r < R; ++r) { // Perform R random restarts
+    // Perform R random restarts
+    for (int r = 0; r < R; ++r) {
+        // Start with a random image from the dataset
         int randomIndex = std::rand() % this->data->size();
         Image* currentImage = (*graph)[randomIndex]->at(0);
+        // If starting image has already been considered in previous iteration
+        // Find a new starting image
         while (neighborsSet.find(currentImage->getId()) != neighborsSet.end())
         {
             randomIndex = std::rand() % this->data->size();
@@ -82,27 +84,32 @@ void GNNS::search(Image* query) {
 
         double currentDistance = dist(query->getCoords(), currentImage->getCoords());
         neighborsSet.insert(currentImage->getId());
-
+        // Perform greedy steps
         for (int t = 0; t < maxGreedySteps; ++t) {
             double distanceNext = std::numeric_limits<double>::max();
             Image* nextImage = nullptr;
+            // For E expansions
             for (int i = 0; i < E ; ++i){
-
-                if (i == graph->at(currentImage->getId() - 1)->size()){
+                // If image has less than E neighbors break
+                if (i == (int)graph->at(currentImage->getId() - 1)->size()){
                     break;
                 }
                 auto neighbor = graph->at(currentImage->getId() - 1)->at(i);
+                // If neighbor hasn't been already considered
                 if (neighborsSet.find(neighbor->getId()) == neighborsSet.end()){
                     double neighborDistance = dist(query->getCoords(),neighbor->getCoords());
+                    // Add to candidates
                     candidates.emplace_back(neighbor, neighborDistance);
                     neighborsSet.insert(neighbor->getId());
+                    // Find best neighbor for next iteration
                     if(neighborDistance < distanceNext){
                         distanceNext = neighborDistance;
                         nextImage = neighbor;
                     }
                 }
             }
-
+            // If no new neighbor has been found OR if they are all worse
+            // than current image, break
             if (nextImage == nullptr || distanceNext >= currentDistance) {
                 break;
             }
@@ -111,6 +118,7 @@ void GNNS::search(Image* query) {
         }
     }
 
+    // Sort candidates based on distance
     sort(candidates.begin(), candidates.end(), sortNeighbors);
 
     auto endApproximate = chrono::high_resolution_clock::now();
@@ -124,9 +132,11 @@ void GNNS::search(Image* query) {
         this->MAF = af;
     }
 
+    // Output results
     outputResults(candidates, neighborsTrue, query);
 }
 
+// Function to output maximum approximation factor and average time
 void GNNS::outputTimeMAF(int querySize) {
     string contents;
 

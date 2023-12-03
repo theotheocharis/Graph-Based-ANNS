@@ -222,7 +222,7 @@ std::vector<Image*> LSH::getNeighborsGNNS(Image *queryImage, int k) {
 
     // Select the top k neighbors
     std::vector<Image*> kNearestNeighbors;
-    for (int i = 0; i < k && i < neighborCandidates.size(); ++i) {
+    for (int i = 0; i < k && i < (int)neighborCandidates.size(); ++i) {
         kNearestNeighbors.push_back(neighborCandidates[i].first);
     }
 

@@ -17,7 +17,6 @@
 class GNNS {
     private:
         int E, R, N;
-        int imageNumber;
         std::vector<Image *> *data;
         // Graph representation as adjacency list
         std::vector<std::vector<Image *> *> *graph;
